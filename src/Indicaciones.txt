@@ -1,0 +1,7 @@
+credencial solo pruebas 
+
+usuario:  admin@demo.com 
+password: 1234
+
+
+// falta hacer las funcionalidades, las que estan solo es un ejemplo 

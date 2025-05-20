@@ -38,7 +38,7 @@ const Layout = ({ children }: LayoutProps) => {
         </nav>
 
         {/* Botón de salir en el footer */}
-        <div className="mt-auto pt-6 border-t border-gray-700">
+        <div className="mt-auto pt-4 border-t border-gray-700">
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 w-full p-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
@@ -59,7 +59,7 @@ const Layout = ({ children }: LayoutProps) => {
         <main className="p-6 flex-grow">{children}</main>
 
         {/* Footer */}
-        <footer className="bg-gray-800 text-white text-center p-4">
+        <footer className="bg-gray-500 text-white text-center p-4">
           <p>&copy; 2025 Todos los derechos reservados.</p>
         </footer>
       </div>

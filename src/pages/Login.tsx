@@ -16,9 +16,15 @@ const Login = () => {
   };
 
   return (
-<div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-900 via-blue-900 to-gray-800">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-900 via-blue-900 to-gray-800">
       <div className="w-96 p-6 bg-white rounded shadow-md">
         <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">Iniciar sesión</h2>
+
+        {/* Imagen debajo del título */}
+        <div className="flex justify-center mb-4">
+          <img src="/logo.png" alt="Login" className="w-24 h-24" />
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"

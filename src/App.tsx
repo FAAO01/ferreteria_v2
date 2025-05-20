@@ -1,10 +1,11 @@
-
-import Login from './pages/Login.tsx'
+import Login from "./pages/Login";
 
 function App() {
   return (
-    <Login />
-  )
+    <div>
+      <Login />
+    </div>
+  );
 }
 
-export default App
+export default App;

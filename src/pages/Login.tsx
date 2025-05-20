@@ -1,48 +1,33 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/authContext';
+import { useState } from "react";
 
 const Login = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const email = form.email.value;
-    const password = form.password.value;
-
-    if (email === 'admin@demo.com' && password === '123456') {
-      login();
-      navigate('/');
-    } else {
-      alert('Correo o contraseña incorrectos');
-    }
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    alert(`Usuario: ${email}`);
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h2>
-        <form onSubmit={handleLogin}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-96 p-6 bg-white rounded shadow-md">
+        <h2 className="text-2xl font-bold text-center mb-4">Iniciar sesión</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
-            name="email"
-            placeholder="Correo"
-            className="w-full mb-4 px-4 py-2 border rounded"
-            required
+            placeholder="Correo electrónico"
+            className="w-full p-2 border rounded"
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
-            name="password"
             placeholder="Contraseña"
-            className="w-full mb-4 px-4 py-2 border rounded"
-            required
+            className="w-full p-2 border rounded"
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-          >
-            Entrar
+          <button className="w-full p-2 bg-blue-500 text-white rounded">
+            Ingresar
           </button>
         </form>
       </div>

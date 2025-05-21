@@ -1,7 +1,17 @@
 import type { ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { FiMenu, FiX, FiHome, FiUser, FiSettings, FiLogOut } from "react-icons/fi"; 
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  FiMenu,
+  FiX,
+  FiHome,
+  FiUser,
+  FiSettings,
+  FiLogOut,
+  FiFileText,
+  FiChevronDown,
+  FiChevronUp,
+} from "react-icons/fi";
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,35 +19,146 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [horaActual, setHoraActual] = useState("");
+  const [facturasAbierto, setFacturasAbierto] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // 🔍 Para saber en qué ruta estamos
+
+  const usuario = "Admin";
+
+  const fechaActual = new Date().toLocaleDateString("es-ES", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  useEffect(() => {
+    const actualizarHora = () => {
+      const hora = new Date().toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
+      setHoraActual(hora);
+    };
+
+    actualizarHora();
+    const intervalo = setInterval(actualizarHora, 1000);
+    return () => clearInterval(intervalo);
+  }, []);
 
   const handleLogout = () => {
     navigate("/");
   };
 
+  const sidebarWidth = isSidebarOpen ? "w-50" : "w-20";
+  const contentPadding = isSidebarOpen ? "pl-[200px]" : "pl-[80px]";
+
+  // Función para verificar si una ruta está activa
+  const isActive = (path: string) => location.pathname === path;
+
+  // Función para verificar si estamos en alguna subruta de facturas
+  const isSubRutaFactura = location.pathname.startsWith("/facturas");
+
   return (
-    <div className="flex min-h-screen bg-gray-0">
-      {/* Sidebar */}
-      <aside className={`bg-gray-900 text-white h-screen flex flex-col transition-all duration-300 ${isSidebarOpen ? "w-50" : "w-20"} p-3`}>
-        {/* Botón de menú */}
-        <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="text-white text-2xl focus:outline-none">
+    <div className="min-h-screen bg-gray-0">
+      <aside
+        className={`fixed top-0 left-0 h-screen bg-gray-900 text-white flex flex-col transition-all duration-300 ${sidebarWidth} p-3 z-50`}
+      >
+        <button
+          onClick={() => setSidebarOpen(!isSidebarOpen)}
+          className="text-white text-2xl focus:outline-none"
+        >
           {isSidebarOpen ? <FiX /> : <FiMenu />}
         </button>
 
-        {/* Opciones de navegación */}
         <nav className="mt-6 flex-grow space-y-3">
-          <Link to="/dashboard" className="flex items-center gap-3 p-3 rounded hover:bg-gray-700">
+          <Link
+            to="/dashboard"
+            className={`flex items-center gap-3 p-3 rounded hover:bg-gray-700 ${
+              isActive("/dashboard") ? "bg-gray-700 font-semibold" : ""
+            }`}
+          >
             <FiHome size={20} /> {isSidebarOpen && "Dashboard"}
           </Link>
-          <Link to="/profile" className="flex items-center gap-3 p-3 rounded hover:bg-gray-700">
+
+          {/* Facturas con submenú */}
+          <div>
+            <button
+              onClick={() => setFacturasAbierto(!facturasAbierto)}
+              className={`flex items-center gap-3 p-3 rounded hover:bg-gray-700 w-full text-left ${
+                isSubRutaFactura ? "bg-gray-700 font-semibold" : ""
+              }`}
+            >
+              <FiFileText size={20} />
+              {isSidebarOpen && (
+                <>
+                  <span className="flex-grow">Facturas</span>
+                  {facturasAbierto ? <FiChevronUp /> : <FiChevronDown />}
+                </>
+              )}
+            </button>
+
+            {/* Submenú desplegable */}
+            {facturasAbierto && isSidebarOpen && (
+              <div className="ml-7 mt-2 space-y-2 text-sm">
+                <Link
+                  to="/facturas/crear"
+                  className={`block p-2 rounded hover:bg-gray-700 ${
+                    isActive("/facturas/crear") ? "bg-gray-700 font-semibold" : ""
+                  }`}
+                >
+                  Crear factura
+                </Link>
+                <Link
+                  to="/facturas/ventas-diarias"
+                  className={`block p-2 rounded hover:bg-gray-700 ${
+                    isActive("/facturas/ventas-diarias") ? "bg-gray-700 font-semibold" : ""
+                  }`}
+                >
+                  Registro de ventas
+                </Link>
+                <Link
+                  to="/facturas/devoluciones"
+                  className={`block p-2 rounded hover:bg-gray-700 ${
+                    isActive("/facturas/devoluciones") ? "bg-gray-700 font-semibold" : ""
+                  }`}
+                >
+                  Devoluciones
+                </Link>
+                <Link
+                  to="/facturas/descuentos"
+                  className={`block p-2 rounded hover:bg-gray-700 ${
+                    isActive("/facturas/descuentos") ? "bg-gray-700 font-semibold" : ""
+                  }`}
+                >
+                  Descuentos
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <Link
+            to="/profile"
+            className={`flex items-center gap-3 p-3 rounded hover:bg-gray-700 ${
+              isActive("/profile") ? "bg-gray-700 font-semibold" : ""
+            }`}
+          >
             <FiUser size={20} /> {isSidebarOpen && "Perfil"}
           </Link>
-          <Link to="/settings" className="flex items-center gap-3 p-3 rounded hover:bg-gray-700">
+
+          <Link
+            to="/settings"
+            className={`flex items-center gap-3 p-3 rounded hover:bg-gray-700 ${
+              isActive("/settings") ? "bg-gray-700 font-semibold" : ""
+            }`}
+          >
             <FiSettings size={20} /> {isSidebarOpen && "Configuración"}
           </Link>
         </nav>
 
-        {/* Botón de salir en el footer */}
         <div className="mt-auto pt-4 border-t border-gray-700">
           <button
             onClick={handleLogout}
@@ -48,20 +169,19 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
       </aside>
 
-      {/* Contenido principal */}
-      <div className="flex flex-col flex-grow">
-        {/* Navbar */}
-         <header className="bg-blue-600 text-white p-4">
-         <h1 className="text-2xl font-bold">Panel de Control</h1> 
-         </header>
+      <div
+        className={`flex flex-col min-h-screen transition-all duration-300 ${contentPadding}`}
+      >
+        <header className="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Panel de Control</h1>
+          <div className="text-sm text-right leading-tight">
+            <div>{fechaActual}</div>
+            <div>{horaActual}</div>
+            <div className="font-semibold">Usuario: {usuario}</div>
+          </div>
+        </header>
 
-        {/* Contenido de la página */}
         <main className="p-6 flex-grow">{children}</main>
-
-        {/* Footer */}
-        <footer className="bg-gray-500 text-white text-center p-4">
-          <p>&copy; 2025 Todos los derechos reservados.</p>
-        </footer>
       </div>
     </div>
   );

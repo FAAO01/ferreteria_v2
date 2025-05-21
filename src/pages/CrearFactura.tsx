@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { FiSearch, FiPlus, FiEdit, FiTrash, FiEye, FiPrinter } from "react-icons/fi";
+import { FiSearch, FiPlus, FiEdit, FiTrash, FiEye, FiPrinter, FiX } from "react-icons/fi";
 
 type Producto = {
   nombre: string;
@@ -89,14 +89,6 @@ const Facturas = () => {
         },
       ]);
     }
-    setCliente("");
-    setFecha(new Date().toISOString().split("T")[0]);
-    setProductos([{ nombre: "", cantidad: 1, precio: 0 }]);
-    setModalOpen(false);
-    setEditandoId(null);
-  };
-
-  const handleCloseModal = () => {
     setCliente("");
     setFecha(new Date().toISOString().split("T")[0]);
     setProductos([{ nombre: "", cantidad: 1, precio: 0 }]);
@@ -268,14 +260,18 @@ const Facturas = () => {
 
       {/* Modal para crear/editar factura */}
       {isModalOpen && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-white/30 backdrop-blur-sm z-50">
-          <div className="bg-white p-6 rounded w-[500px] relative shadow-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Fondo semi-transparente y borroso */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+          <div className="bg-white p-6 rounded-lg border-4 border-white shadow-600 shadow-lg w-[500px] relative z-10">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={handleCloseModal}
+              onClick={() => {
+                setModalOpen(false);
+              }}
               aria-label="Cerrar"
             >
-              ×
+              <FiX size={24} />
             </button>
             <h3 className="text-xl font-bold mb-4">
               {editandoId !== null ? "Editar Factura" : "Nueva Factura"}

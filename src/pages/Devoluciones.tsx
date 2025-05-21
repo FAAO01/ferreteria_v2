@@ -1,4 +1,4 @@
 // pages/RegistroVentas.tsx
 export default function RegistroVentas() {
-  return <h2>Registro de Ventas</h2>;
+  return <h2> ERROR 504</h2>;
 }

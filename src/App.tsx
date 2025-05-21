@@ -12,12 +12,20 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+
+        //Rutas de Facturas
         <Route path="/facturas/crear" element={<Layout><CrearFactura /></Layout>} />
         <Route path="/facturas/ventas-diarias" element={<Layout><VentasDiarias /></Layout>} />
         <Route path="/facturas/devoluciones" element={<Layout><Devoluciones /></Layout>} />
         <Route path="/facturas/descuentos" element={<Layout><Descuentos /></Layout>} />
+
+        //Rutas de dashboard
         <Route path="/dashboard" element={<Layout><Dashboard></Dashboard></Layout>} />
+
+        //Rutas de usuario
         <Route path="/profile" element={<Layout><h2>Perfil de Usuario</h2></Layout>} />
+
+        //Rutas de configuracion
         <Route path="/settings" element={<Layout><h2>Configuración</h2></Layout>} />
       </Routes>
     </Router>

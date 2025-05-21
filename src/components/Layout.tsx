@@ -146,7 +146,7 @@ const Layout = ({ children }: LayoutProps) => {
               isActive("/profile") ? "bg-gray-700 font-semibold" : ""
             }`}
           >
-            <FiUser size={20} /> {isSidebarOpen && "Perfil"}
+            <FiUser size={20} /> {isSidebarOpen && "Uuarios"}
           </Link>
 
           <Link

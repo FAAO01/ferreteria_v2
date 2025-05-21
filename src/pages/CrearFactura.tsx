@@ -190,7 +190,7 @@ const Facturas = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center w-2/3">
           <FiSearch size={20} className="mr-2" />
-          <input
+          <input 
             type="text"
             placeholder="Buscar factura..."
             className="border p-2 rounded w-full"

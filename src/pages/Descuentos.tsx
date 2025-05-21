@@ -131,9 +131,9 @@ const Descuentos: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center w-2/3">
           <FiSearch size={20} className="mr-2" />
-          <input
+          <input 
             type="text"
-            placeholder="Buscar producto..."
+            placeholder="Buscar factura..."
             className="border p-2 rounded w-full"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
@@ -141,13 +141,10 @@ const Descuentos: React.FC = () => {
         </div>
 
         <button
-          onClick={() => {
-            setModalOpen(true);
-            resetForm();
-          }}
+          onClick={() => setModalOpen(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2"
         >
-          <FiPlus size={20} /> Agregar Descuento
+          <FiPlus size={20} /> Crear Factura
         </button>
       </div>
 

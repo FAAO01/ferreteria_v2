@@ -100,10 +100,6 @@ const Facturas = () => {
     setDetalleFactura(factura);
   };
 
-  const handleCerrarDetalle = () => {
-    setDetalleFactura(null);
-  };
-
   const handleEditar = (factura: Factura) => {
     setCliente(factura.cliente);
     setFecha(factura.fecha.split("/").reverse().join("-")); // Convertir a formato yyyy-mm-dd
@@ -128,6 +124,7 @@ const Facturas = () => {
   };
 
   const handleImprimir = (factura: Factura) => {
+    
     // Crea una ventana nueva solo con el detalle de la factura
     const printWindow = window.open("", "_blank", "width=800,height=600");
     if (printWindow) {
@@ -224,34 +221,36 @@ const Facturas = () => {
               <td className="border border-gray-300 p-2">{factura.total}</td>
               <td className="border border-gray-300 p-2">{factura.fecha}</td>
               <td className="border border-gray-300 p-2 flex justify-center gap-2">
-                <button
-                  className="text-blue-500 hover:text-blue-700"
-                  onClick={() => handleVerDetalle(factura)}
-                  title="Ver detalle"
-                >
-                  <FiEye size={20} />
-                </button>
-                <button
-                  className="text-green-500 hover:text-green-700"
-                  onClick={() => handleEditar(factura)}
-                  title="Editar"
-                >
-                  <FiEdit size={20} />
-                </button>
-                <button
-                  className="text-red-500 hover:text-red-700"
-                  onClick={() => handleSolicitarBorrar(factura.id)}
-                  title="Borrar"
-                >
-                  <FiTrash size={20} />
-                </button>
-                <button
-                  className="text-gray-500 hover:text-gray-700"
-                  onClick={() => handleImprimir(factura)}
-                  title="Imprimir"
-                >
-                  <FiPrinter size={20} />
-                </button>
+                <div className="flex justify-center gap-2 w-full">
+    <button
+      className="text-blue-500 hover:text-blue-700"
+      onClick={() => handleVerDetalle(factura)}
+      title="Ver detalle"
+    >
+      <FiEye size={20} />
+    </button>
+    <button
+      className="text-green-500 hover:text-green-700"
+      onClick={() => handleEditar(factura)}
+      title="Editar"
+    >
+      <FiEdit size={20} />
+    </button>
+    <button
+      className="text-red-500 hover:text-red-700"
+      onClick={() => handleSolicitarBorrar(factura.id)}
+      title="Borrar"
+    >
+      <FiTrash size={20} />
+    </button>
+    <button
+      className="text-gray-500 hover:text-gray-700"
+      onClick={() => handleImprimir(factura)}
+      title="Imprimir"
+    >
+      <FiPrinter size={20} />
+    </button>
+  </div>
               </td>
             </tr>
           ))}
@@ -385,14 +384,18 @@ const Facturas = () => {
 
       {/* Modal de detalle de factura */}
       {detalleFactura && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-white/30 backdrop-blur-sm z-50">
-          <div className="bg-white p-6 rounded w-[500px] relative shadow-lg">
+        <div className="fixed inset-0 z-50 flex justify-center items-center">
+          {/* Fondo semi-transparente y borroso */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+          <div className="bg-white p-6 rounded-lg border-4 border-white -600 shadow-lg w-[500px] relative z-10">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={handleCerrarDetalle}
+              onClick={() => {
+                setDetalleFactura(null);
+              }}
               aria-label="Cerrar"
             >
-              ×
+              <FiX size={24} />
             </button>
             <h3 className="text-xl font-bold mb-4">Detalle de Factura</h3>
             <p><strong>ID:</strong> {detalleFactura.id}</p>
@@ -422,6 +425,32 @@ const Facturas = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación de borrado */}
+      {borrarId !== null && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center">
+          {/* Fondo semi-transparente y borroso */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+          <div className="bg-white p-6 rounded-lg border-4 border- white shadow-600 shadow-lg w-[350px] relative z-10 text-center">
+            <h3 className="text-xl font-bold mb-4">¿Eliminar factura?</h3>
+            <p className="mb-6">Esta acción no se puede deshacer.</p>
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded"
+                onClick={handleBorrar}
+              >
+                Eliminar
+              </button>
+              <button
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
+                onClick={handleCancelarBorrar}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}

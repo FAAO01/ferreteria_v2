@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Datos simulados de usuarios
 const usuarios = [
@@ -44,6 +44,17 @@ const usuarios = [
   },
 ];
 
+// Hook para detectar tamaño de pantalla
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  return width;
+}
+
 const styles = {
   container: {
     padding: 32,
@@ -53,6 +64,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
+    boxSizing: 'border-box' as const,
   },
   searchBox: {
     marginBottom: 32,
@@ -60,6 +72,7 @@ const styles = {
     maxWidth: 1200,
     display: 'flex',
     justifyContent: 'flex-start',
+    boxSizing: 'border-box' as const,
   },
   input: {
     width: '100%',
@@ -70,19 +83,26 @@ const styles = {
     outline: 'none',
     boxShadow: '0 2px 8px rgba(44,62,80,0.04)',
     background: '#fff',
+    boxSizing: 'border-box' as const,
   },
-  grid: {
+  grid: (width: number) => ({
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-    gap: 32,
+    gridTemplateColumns:
+      width > 1100
+        ? 'repeat(3, 1fr)'
+        : width > 700
+        ? 'repeat(2, 1fr)'
+        : '1fr',
+    gap: width < 500 ? 16 : 32,
     width: '100%',
     maxWidth: 1200,
-  },
-  card: {
+    boxSizing: 'border-box' as const,
+  }),
+  card: (width: number) => ({
     background: '#fff',
     borderRadius: 18,
     boxShadow: '0 4px 24px rgba(44,62,80,0.13)',
-    padding: '40px 36px 32px 36px',
+    padding: width < 500 ? '28px 10px 18px 10px' : '40px 36px 32px 36px',
     minWidth: 0,
     width: '100%',
     display: 'flex',
@@ -90,7 +110,8 @@ const styles = {
     alignItems: 'center',
     border: '1.5px solid #e0e6ed',
     position: 'relative' as const,
-  },
+    boxSizing: 'border-box' as const,
+  }),
   titulo: {
     fontSize: 22,
     fontWeight: 800,
@@ -113,25 +134,25 @@ const styles = {
     display: 'block',
     wordBreak: 'break-word' as const,
   },
-  avatar: {
-    width: 70,
-    height: 70,
+  avatar: (width: number) => ({
+    width: width < 500 ? 50 : 70,
+    height: width < 500 ? 50 : 70,
     borderRadius: '50%',
     background: 'linear-gradient(135deg, #1976d2 60%, #42a5f5 100%)',
     color: '#fff',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 30,
+    fontSize: width < 500 ? 20 : 30,
     fontWeight: 700,
     margin: '0 auto 18px auto',
     boxShadow: '0 2px 8px rgba(25, 118, 210, 0.13)',
     border: '3px solid #fff',
     position: 'absolute' as const,
-    top: -35,
+    top: width < 500 ? -25 : -35,
     left: '50%',
     transform: 'translateX(-50%)',
-  },
+  }),
   infoSection: {
     marginTop: 40,
     width: '100%',
@@ -141,6 +162,78 @@ const styles = {
     background: '#e0e6ed',
     margin: '12px 0 18px 0',
     border: 'none',
+  },
+  // Modal styles
+  modalOverlay: {
+    position: 'fixed' as const,
+    top: 0, left: 0, right: 0, bottom: 0,
+    background: 'rgba(0,0,0,0.25)',
+    backdropFilter: 'blur(4px)',
+    WebkitBackdropFilter: 'blur(4px)',
+    zIndex: 1000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalContent: (width: number) => ({
+    background: '#fff',
+    borderRadius: 14,
+    padding: width < 500 ? '18px 8px' : '28px 48px',
+    minWidth: width < 500 ? 0 : 520,
+    maxWidth: 700,
+    width: width < 500 ? '98vw' : '90vw',
+    boxShadow: '0 4px 32px rgba(44,62,80,0.18)',
+    position: 'relative' as const,
+    maxHeight: width < 500 ? '90vh' : 520,
+    overflowY: 'auto' as const,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
+    boxSizing: 'border-box' as const,
+  }),
+  closeButton: {
+    position: 'absolute' as const,
+    top: 12,
+    right: 12,
+    background: 'none',
+    border: 'none',
+    fontSize: 22,
+    color: '#888',
+    cursor: 'pointer',
+  },
+  modalFormGroup: {
+    marginBottom: 14,
+    display: 'flex',
+    flexDirection: 'column' as const,
+  },
+  modalInput: {
+    padding: '10px 12px',
+    borderRadius: 8,
+    border: '1.5px solid #e0e6ed',
+    fontSize: 16,
+    outline: 'none',
+    background: '#fff',
+    marginTop: 4,
+  },
+  modalSelect: {
+    padding: '10px 12px',
+    borderRadius: 8,
+    border: '1.5px solid #e0e6ed',
+    fontSize: 16,
+    outline: 'none',
+    background: '#fff',
+    marginTop: 4,
+  },
+  modalSubmit: {
+    background: '#1976d2',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 8,
+    padding: '10px 24px',
+    fontWeight: 700,
+    fontSize: 16,
+    cursor: 'pointer',
+    marginTop: 10,
   },
 };
 
@@ -154,7 +247,7 @@ function getInitials(nombre: string) {
 
 type Usuario = typeof usuarios[0];
 
-function PerfilCard({ usuario, onEditar }: { usuario: Usuario, onEditar: (usuario: Usuario) => void }) {
+function PerfilCard({ usuario, onEditar, width }: { usuario: Usuario, onEditar: (usuario: Usuario) => void, width: number }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   const handleMenuClick = (e: React.MouseEvent) => {
@@ -168,7 +261,7 @@ function PerfilCard({ usuario, onEditar }: { usuario: Usuario, onEditar: (usuari
   };
 
   return (
-    <div style={styles.card}>
+    <div style={styles.card(width)}>
       {/* Botón de 3 puntitos */}
       <div
         style={{
@@ -221,7 +314,7 @@ function PerfilCard({ usuario, onEditar }: { usuario: Usuario, onEditar: (usuari
           </div>
         </div>
       )}
-      <div style={styles.avatar}>{getInitials(usuario.nombre)}</div>
+      <div style={styles.avatar(width)}>{getInitials(usuario.nombre)}</div>
       <div style={styles.infoSection}>
         <h2 style={styles.titulo}>{usuario.nombre}</h2>
         <hr style={styles.divider} />
@@ -250,15 +343,16 @@ function PerfilCard({ usuario, onEditar }: { usuario: Usuario, onEditar: (usuari
   );
 }
 
-function EditarUsuarioModal({ usuario, abierto, onClose, onGuardar }: {
+function EditarUsuarioModal({ usuario, abierto, onClose, onGuardar, width }: {
   usuario: Usuario | null,
   abierto: boolean,
   onClose: () => void,
   onGuardar: (usuarioEditado: Usuario) => void,
+  width: number,
 }) {
   const [form, setForm] = useState<Usuario | null>(usuario);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setForm(usuario);
   }, [usuario]);
 
@@ -277,114 +371,64 @@ function EditarUsuarioModal({ usuario, abierto, onClose, onGuardar }: {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.25)',
-      backdropFilter: 'blur(4px)',
-      WebkitBackdropFilter: 'blur(4px)',
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <div style={{
-        background: '#fff',
-        borderRadius: 14,
-        padding: '28px 48px',
-        minWidth: 520,
-        maxWidth: 700,
-        width: '90vw',
-        boxShadow: '0 4px 32px rgba(44,62,80,0.18)',
-        position: 'relative',
-        maxHeight: 520,
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }}>
+    <div style={styles.modalOverlay}>
+      <div style={styles.modalContent(width)}>
         <button
           onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: 12,
-            right: 12,
-            background: 'none',
-            border: 'none',
-            fontSize: 22,
-            color: '#888',
-            cursor: 'pointer',
-          }}
+          style={styles.closeButton}
           aria-label="Cerrar"
         >×</button>
-        <h2 style={{ marginBottom: 18, color: '#1976d2' }}>Editar Usuario</h2>
+        <h2 style={{ marginBottom: 18, color: '#1976d2', fontSize: width < 500 ? 18 : 22 }}>Editar Usuario</h2>
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 1, marginTop: 250 }}>
-            <label>Nombre:<br />
-              <input name="nombre" value={form.nombre} onChange={handleChange} style={styles.input} />
+          <div style={styles.modalFormGroup}>
+            <label>Nombre:
+              <input name="nombre" value={form.nombre} onChange={handleChange} style={styles.modalInput} />
             </label>
           </div>
-          <div style={{ marginBottom: 14 }}>
-            <label>Correo:<br />
-              <input name="correo" value={form.correo} onChange={handleChange} style={styles.input} />
+          <div style={styles.modalFormGroup}>
+            <label>Correo:
+              <input name="correo" value={form.correo} onChange={handleChange} style={styles.modalInput} />
             </label>
           </div>
-          <div style={{ marginBottom: 14 }}>
-            <label>Rol:<br />
-              <input name="rol" value={form.rol} onChange={handleChange} style={styles.input} />
+          <div style={styles.modalFormGroup}>
+            <label>Rol:
+              <input name="rol" value={form.rol} onChange={handleChange} style={styles.modalInput} />
             </label>
           </div>
-          <div style={{ marginBottom: 14 }}>
-            <label>Cédula:<br />
-              <input name="cedula" value={form.cedula} onChange={handleChange} style={styles.input} />
+          <div style={styles.modalFormGroup}>
+            <label>Cédula:
+              <input name="cedula" value={form.cedula} onChange={handleChange} style={styles.modalInput} />
             </label>
           </div>
-          <div style={{ marginBottom: 14 }}>
-            <label>Teléfono:<br />
-              <input name="telefono" value={form.telefono} onChange={handleChange} style={styles.input} />
+          <div style={styles.modalFormGroup}>
+            <label>Teléfono:
+              <input name="telefono" value={form.telefono} onChange={handleChange} style={styles.modalInput} />
             </label>
           </div>
-          <div style={{ marginBottom: 14 }}>
-            <label>Dirección:<br />
-              <input name="direccion" value={form.direccion} onChange={handleChange} style={styles.input} />
+          <div style={styles.modalFormGroup}>
+            <label>Dirección:
+              <input name="direccion" value={form.direccion} onChange={handleChange} style={styles.modalInput} />
             </label>
           </div>
-          <div style={{ marginBottom: 14 }}>
-            <label>Fecha de registro:<br />
-              <input name="fechaRegistro" value={form.fechaRegistro} onChange={handleChange} style={styles.input} />
+          <div style={styles.modalFormGroup}>
+            <label>Fecha de registro:
+              <input name="fechaRegistro" value={form.fechaRegistro} onChange={handleChange} style={styles.modalInput} />
             </label>
           </div>
-          <div style={{ marginBottom: 18 }}>
-            <label>Estado:<br />
+          <div style={styles.modalFormGroup}>
+            <label>Estado:
               <select
                 name="estado"
                 value={form.estado}
                 onChange={handleChange}
-                style={{
-                  ...styles.input,
-                  padding: '12px 16px',
-                  fontSize: 16,
-                  borderRadius: 8,
-                  border: '1.5px solid #e0e6ed',
-                  background: '#fff',
-                  width: '100%',
-                }}
+                style={styles.modalSelect}
               >
                 <option value="Activo">Activo</option>
                 <option value="Inactivo">Inactivo</option>
               </select>
             </label>
           </div>
-          <button type="submit" style={{
-            background: '#1976d2',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '10px 24px',
-            fontWeight: 700,
-            fontSize: 16,
-            cursor: 'pointer',
-          }}>Guardar</button>
+          <button type="submit" style={styles.modalSubmit}>Guardar</button>
         </form>
       </div>
     </div>
@@ -392,6 +436,7 @@ function EditarUsuarioModal({ usuario, abierto, onClose, onGuardar }: {
 }
 
 export default function Perfiles() {
+  const width = useWindowWidth();
   const [busqueda, setBusqueda] = useState("");
   const [usuariosState, setUsuariosState] = useState(usuarios);
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -424,6 +469,7 @@ export default function Perfiles() {
         abierto={modalAbierto}
         onClose={() => { setModalAbierto(false); setUsuarioEditando(null); }}
         onGuardar={handleGuardarUsuario}
+        width={width}
       />
       <div style={styles.searchBox}>
         <input
@@ -434,14 +480,14 @@ export default function Perfiles() {
           onChange={(e) => setBusqueda(e.target.value)}
         />
       </div>
-      <div style={styles.grid}>
+      <div style={styles.grid(width)}>
         {usuariosFiltrados.length === 0 ? (
           <div style={{ gridColumn: "1/-1", textAlign: "center", color: "#888" }}>
             No se encontraron perfiles.
           </div>
         ) : (
           usuariosFiltrados.map((usuario) => (
-            <PerfilCard key={usuario.cedula} usuario={usuario} onEditar={handleEditarUsuario} />
+            <PerfilCard key={usuario.cedula} usuario={usuario} onEditar={handleEditarUsuario} width={width} />
           ))
         )}
       </div>

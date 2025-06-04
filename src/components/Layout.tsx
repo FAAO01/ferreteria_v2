@@ -11,6 +11,8 @@ import {
   FiFileText,
   FiChevronDown,
   FiChevronUp,
+  FiUsers,
+  FiUserPlus,
 } from "react-icons/fi";
 
 interface LayoutProps {
@@ -21,8 +23,9 @@ const Layout = ({ children }: LayoutProps) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [horaActual, setHoraActual] = useState("");
   const [facturasAbierto, setFacturasAbierto] = useState(false);
+  const [usuariosAbierto, setUsuariosAbierto] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // 🔍 Para saber en qué ruta estamos
+  const location = useLocation();
 
   const usuario = "Admin";
 
@@ -61,6 +64,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   // Función para verificar si estamos en alguna subruta de facturas
   const isSubRutaFactura = location.pathname.startsWith("/facturas");
+
+  // Función para verificar si estamos en alguna subruta de usuarios
+  const isSubRutaUsuarios = location.pathname.startsWith("/profile");
 
   return (
     <div className="min-h-screen bg-gray-0">
@@ -140,14 +146,51 @@ const Layout = ({ children }: LayoutProps) => {
             )}
           </div>
 
-          <Link
-            to="/profile"
-            className={`flex items-center gap-3 p-3 rounded hover:bg-gray-700 ${
-              isActive("/profile") ? "bg-gray-700 font-semibold" : ""
-            }`}
-          >
-            <FiUser size={20} /> {isSidebarOpen && "Uuarios"}
-          </Link>
+          {/* Usuarios con submenú */}
+          <div>
+            <button
+              onClick={() => setUsuariosAbierto(!usuariosAbierto)}
+              className={`flex items-center gap-3 p-3 rounded hover:bg-gray-700 w-full text-left ${
+                isSubRutaUsuarios ? "bg-gray-700 font-semibold" : ""
+              }`}
+            >
+              <FiUser size={20} />
+              {isSidebarOpen && (
+                <>
+                  <span className="flex-grow">Usuarios</span>
+                  {usuariosAbierto ? <FiChevronUp /> : <FiChevronDown />}
+                </>
+              )}
+            </button>
+
+            {/* Submenú de usuarios */}
+            {usuariosAbierto && isSidebarOpen && (
+              <div className="ml-7 mt-2 space-y-2 text-sm">
+                <Link
+                  to="/profile/perfiles"
+                  className={`block p-2 rounded hover:bg-gray-700 ${
+                    isActive("/profile/perfiles") ? "bg-gray-700 font-semibold" : ""
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <FiUsers size={16} />
+                    Perfiles
+                  </span>
+                </Link>
+                <Link
+                  to="/profile/nuevo-usuario"
+                  className={`block p-2 rounded hover:bg-gray-700 ${
+                    isActive("/profile/nuevo-usuario") ? "bg-gray-700 font-semibold" : ""
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <FiUserPlus size={16} />
+                    Nuevo usuario
+                  </span>
+                </Link>
+              </div>
+            )}
+          </div>
 
           <Link
             to="/settings"

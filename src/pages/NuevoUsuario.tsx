@@ -60,7 +60,7 @@ const styles = {
     gap: 24,
     marginBottom: 0,
     flexWrap: "wrap" as const,
-    flexDirection: width < 700 ? "column" : "row" as const,
+    flexDirection: width < 700 ? "column" : "row",
   }),
   formColumn: (width: number) => ({
     flex: 1,

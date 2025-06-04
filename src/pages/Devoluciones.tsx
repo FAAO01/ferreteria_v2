@@ -7,9 +7,20 @@ const devoluciones = [
   { id: 3, usuario: "Pedro", fecha: "2024-06-12", producto: "Taladro", cantidad: 1, motivo: "No funcionaba" },
 ];
 
-const styles = {
+// Hook para detectar ancho de pantalla
+function useWindowWidth() {
+  const [width, setWidth] = React.useState<number>(window.innerWidth);
+  React.useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  return width;
+}
+
+const getResponsiveStyles = (width: number) => ({
   container: {
-    padding: 32,
+    padding: width < 600 ? 10 : 32,
     fontFamily: 'Segoe UI, Roboto, Arial, sans-serif',
     background: '#f4f6fb',
     minHeight: '100vh',
@@ -18,61 +29,71 @@ const styles = {
     background: '#fff',
     borderRadius: 12,
     boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
-    marginBottom: 32,
-    padding: 24,
+    marginBottom: width < 600 ? 16 : 32,
+    padding: width < 600 ? 10 : 24,
     transition: 'box-shadow 0.2s',
+    overflowX: 'auto' as const,
   } as React.CSSProperties,
   table: {
     width: '100%',
+    minWidth: 500,
     borderCollapse: 'collapse',
     marginTop: 12,
+    fontSize: width < 600 ? 13 : 16,
   } as React.CSSProperties,
   th: {
-    background: '#2d3e50', // Color del sidebar
+    background: '#2d3e50',
     color: '#fff',
-    padding: '12px 8px',
+    padding: width < 600 ? '8px 4px' : '12px 8px',
     fontWeight: 600,
     textAlign: 'left',
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
+    fontSize: width < 600 ? 13 : 15,
   } as React.CSSProperties,
   td: {
-    padding: '10px 8px',
+    padding: width < 600 ? '7px 4px' : '10px 8px',
     borderBottom: '1px solid #e0e6ed',
     color: '#2d3e50',
     background: '#f9fafc',
+    fontSize: width < 600 ? 13 : 15,
   } as React.CSSProperties,
   trHover: {
     background: '#eaf1fb',
   } as React.CSSProperties,
   titulo: {
-    fontSize: 28,
+    fontSize: width < 600 ? 20 : 28,
     fontWeight: 800,
-    color: '#1a2233', // Color similar al sidebar
-    marginBottom: 32,
+    color: '#1a2233',
+    marginBottom: width < 600 ? 16 : 32,
     letterSpacing: 1,
+    textAlign: width < 600 ? "center" : "left",
   } as React.CSSProperties,
   searchBox: {
     marginBottom: 20,
     display: 'flex',
-    justifyContent: 'flex-start',
+    justifyContent: width < 600 ? 'center' : 'flex-start',
   } as React.CSSProperties,
   input: {
-    padding: '8px 14px',
+    padding: width < 600 ? '8px 8px' : '8px 14px',
     borderRadius: 6,
     border: '1px solid #b0b8c1',
-    fontSize: 16,
+    fontSize: width < 600 ? 14 : 16,
     outline: 'none',
-    width: 420,
-    marginLeft: 0,
+    width: width < 600 ? "100%" : 420,
+    minWidth: width < 600 ? 0 : 200,
     background: '#fff',
     color: '#2d3e50',
     boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
     transition: 'border 0.2s',
+    maxWidth: width < 600 ? "98vw" : 420,
   } as React.CSSProperties,
-};
+});
 
 export default function Devoluciones() {
+  const width = useWindowWidth();
+  const styles = getResponsiveStyles(width);
+
   const [busqueda, setBusqueda] = useState("");
 
   const devolucionesFiltradas = devoluciones.filter((dev) => {

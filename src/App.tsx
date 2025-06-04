@@ -7,7 +7,7 @@ import Devoluciones from "./pages/Devoluciones";
 import Descuentos from "./pages/Descuentos";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Perfiles";
-import NuevoUsuario from "./pages/NuevoUsuario.tsx"; // Corregido el nombre de la variable
+import NuevoUsuario from "./pages/NuevoUsuario"; // Corregido el nombre de la variable
 
 function App() {
   return (

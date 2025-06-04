@@ -22,6 +22,21 @@ const estados = [
   { value: "inactivo", label: "Inactivo" },
 ];
 
+// Hook para detectar el ancho de la ventana
+function useWindowWidth() {
+  const isClient = typeof window === "object";
+  const getWidth = () => (isClient ? window.innerWidth : 1024);
+  const [width, setWidth] = React.useState<number>(getWidth());
+
+  React.useEffect(() => {
+    if (!isClient) return;
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isClient]);
+  return width;
+}
+
 const styles = {
   container: {
     maxWidth: 820,
@@ -40,19 +55,21 @@ const styles = {
     fontSize: 24,
     letterSpacing: 0.5,
   },
-  formRow: {
+  formRow: (width: number) => ({
     display: "flex",
     gap: 24,
     marginBottom: 0,
     flexWrap: "wrap" as const,
-  },
-  formColumn: {
+    flexDirection: width < 700 ? "column" : "row" as const,
+  }),
+  formColumn: (width: number) => ({
     flex: 1,
     minWidth: 0,
     display: "flex",
     flexDirection: "column" as const,
     gap: 18,
-  },
+    width: width < 700 ? "100%" : undefined,
+  }),
   formGroup: {
     display: "flex",
     flexDirection: "column" as const,
@@ -111,6 +128,8 @@ const styles = {
 };
 
 const NuevoUsuario: React.FC = () => {
+  const width = useWindowWidth() || 1024; // fallback para SSR o valores undefined
+
   const [formData, setFormData] = useState<UsuarioFormData>({
     nombre: "",
     email: "",
@@ -175,8 +194,8 @@ const NuevoUsuario: React.FC = () => {
     <div style={styles.container}>
       <h2 style={styles.title}>Agregar Nuevo Usuario</h2>
       <form onSubmit={handleSubmit} autoComplete="off">
-        <div style={styles.formRow}>
-          <div style={styles.formColumn}>
+        <div style={styles.formRow(width)}>
+          <div style={styles.formColumn(width)}>
             <div style={styles.formGroup}>
               <label style={styles.label}>Nombre</label>
               <input
@@ -245,7 +264,7 @@ const NuevoUsuario: React.FC = () => {
               </select>
             </div>
           </div>
-          <div style={styles.formColumn}>
+          <div style={styles.formColumn(width)}>
             <div style={styles.formGroup}>
               <label style={styles.label}>Teléfono</label>
               <input
@@ -285,13 +304,13 @@ const NuevoUsuario: React.FC = () => {
             <div style={styles.formGroup}>
               <label style={styles.label}>Contraseña</label>
               <input
-                style={styles.input}
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="********"
-                required
+               style={styles.input}
+               type="password"
+               name="password"
+               value={formData.password}
+               onChange={handleChange}
+               placeholder="********"
+               required
               />
             </div>
           </div>
